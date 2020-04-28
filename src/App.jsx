@@ -1,5 +1,5 @@
 import React from 'react';
-import { InstantSearch, Hits, SearchBox, Index, connectHits  } from 'react-instantsearch-dom';
+import { InstantSearch, Hits, SearchBox, Index, Stats, connectHits, connectStats, RefinementList } from 'react-instantsearch-dom';
 import algoliasearch from 'algoliasearch/lite';
 
 const searchClient = algoliasearch(
@@ -9,7 +9,7 @@ const searchClient = algoliasearch(
 
 
 const CustomHit = ({hit}) => (
-  <div className='card' style={{ width: '300px', height: '515px'}}>
+  <div >
     <img className='card-img-top' src={hit.thumbnail_url} />
     <div className='card-body'>
       <p className='card-title'>
@@ -40,14 +40,28 @@ const CustomHits = ({hits}) => (
   </div>
 );
 
+
 const ConnectedCustomHits = connectHits(CustomHits);
+
+// how many 2 miliseconds are there in 1000 / 2(result number)
+const CustomStats = ({processingTimeMS, nbHits}) => {
+  const hitPerSec = (1000 / processingTimeMS) * nbHits;
+  return (
+    <p>Possible hits per second: {hitPerSec}</p>
+  );
+};
+
+const ConnectedCustomStats = connectStats(CustomStats);
 
 const App = () => (
   <InstantSearch searchClient={searchClient} indexName="airbnb">
     <SearchBox />
+    
     <p>Results in first dataset</p>
-    <Hits />
-    {/* <Hits hitComponent={CustomHit}/> */}
+    {/* <Hits /> */}
+    {/* <Stats /> */}
+    <RefinementList attribute="city" />
+    <Hits hitComponent={CustomHit}/>
     {/* <ConnectedCustomHits /> */}
     
     
